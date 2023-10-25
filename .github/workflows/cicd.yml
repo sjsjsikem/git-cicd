@@ -46,11 +46,48 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3 
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.DESCRIBE_TOKEN }}
+
+      - id: docker_meta
+        uses: docker/metadata-action@v4.4.0
+        with:
+          images: ghcr.io/sigstore/sample-honk
+          tags: type=sha,format=long
+
+      - name: Build and Push container images
+        uses: docker/build-push-action@v4.0.0
+        id: build-and-push
+        with:
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+
+      # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+      - name: Sign image with a key
+        run: |
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+        env:
+          TAGS: ${{ steps.docker_meta.outputs.tags }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+
+      - name: Sign the images with GitHub OIDC Token
+        env:
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          TAGS: ${{ steps.docker_meta.outputs.tags }}
+        run: cosign sign --yes "${TAGS}@${DIGEST}"
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: 'tmy2517@gmail.com'
-          password: 'Tmy78044#'
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract metadata(tags,labels) for Docker
         id: meta
@@ -66,39 +103,28 @@ jobs:
             tags: 'sjsjsikem/git-cicd1'
             labels: 'sjsjsikem/git-cicd1'
 
-      - name: Send custom JSON data to Slack workflow
-        uses: slackapi/slack-github-action@v1.24.0
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
         env:
-         SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
-         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'Post Content :rocket:'
+          SLACK_TITLE: Post Title
+          SLACK_USERNAME: rtCamp
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
+      - name: Upload file
+        uses: MeilCli/slack-upload-file@v3
         with:
-    # For posting a rich message using Block Kit
-           payload: |
-              {
-                "text": "GitHub Action build result: ${{ job.status }}\n",
-                "blocks": [
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": "GitHub Action build result: ${{ job.status }}\n"
-                    }
-                  }
-                ]
-              }
-          
-
-      - uses: MeilCli/slack-upload-file@v3
-        with:
-          slack_token: ${{secrets.SLACK_TOKEN}}
-          channel_id: 'test-submission'
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           content: 'file content'
-          file_type: 'table'
+          file_type: 'text'
           file_name: 'text.txt'
           title: 'title of file'
           initial_comment: 'post by slack-upload-file'
-          # thread_ts: 'option'
+         
               
             
             
