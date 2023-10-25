@@ -1,5 +1,5 @@
-- name: Checkout
-  uses: actions/checkout@v4.1.1
+ name: Checkout
+  uses: actions/checkout@v4
   with:
     # Repository name with owner. For example, actions/checkout
     repository: 'github.git-cicd'
