@@ -67,7 +67,7 @@ jobs:
             labels: 'sjsjsikem/git-cicd1'
 
       - name: Send custom JSON data to Slack workflow
-        uses: actions/slack@v1
+        uses: slackapi/slack-github-action@v1.24.0
         env:
          SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
