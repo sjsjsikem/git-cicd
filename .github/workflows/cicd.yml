@@ -47,7 +47,6 @@ jobs:
       - name: Login to Docker HUb
         uses: docker/login-action@v3
         with:
-            registry: ghcr.io
             username: 'tmy2517@gmail.com'
             password: 'Tmy78044#'
 
