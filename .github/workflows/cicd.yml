@@ -10,15 +10,12 @@ jobs:
  myci:
    runs-on: ubuntu-latest
    steps:
+      - name: LS output before
+        run: ls
       - name: Checkout
         uses: actions/checkout@v4.1.1
-        with:
-          reposity: 'git-cicd'
-          ssh-key: 'git@github.com:sjsjsikem/git-cicd.git'
-          ssh-known-hosts: 'ssh-keyscan github.com'
-          
-          
-
+      - name: LS Output
+        run: ls
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         
