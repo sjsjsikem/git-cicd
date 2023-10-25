@@ -15,7 +15,6 @@ jobs:
         with:
           reposity: 'git-cicd'
           ref: 'master'
-          ssh-key: 'git@github.com:sjsjsikem/git-cicd.git'
           
 
       - name: Set up QEMU
