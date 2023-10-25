@@ -28,6 +28,20 @@ jobs:
             username: 'tmy2517@gmail.com'
             password: 'Tmy78044#'
 
+      - name: Extract metadata(tags,labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5.0.0
+        with: 
+            images: sjsjsikem/testjodejsapp
+
       - name: Build and push
         uses: docker/build-push-action@v5
+        with: 
+            context: .
+            push: true
+            tags: ${{steps.meta.output.tags}}
+            labels: ${{steps.meta.output.labels}}
+            
+            
+            
 
