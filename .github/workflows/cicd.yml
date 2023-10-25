@@ -15,6 +15,10 @@ jobs:
         with:
           reposity: 'git-cicd'
           ref: 'master'
+          token: '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'
+          ssh-key: 'git@github.com:sjsjsikem/git-cicd.git'
+          ssh-known-hosts: 'ssh-keyscan github.com'
+          
           
 
       - name: Set up QEMU
