@@ -94,7 +94,7 @@ jobs:
           slack_token: ${{secrets.SLACK_TOKEN}}
           channel_id: 'test-submission'
           content: 'file content'
-          file_type: 'text'
+          file_type: 'table'
           file_name: 'text.txt'
           title: 'title of file'
           initial_comment: 'post by slack-upload-file'
