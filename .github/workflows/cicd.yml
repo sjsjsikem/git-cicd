@@ -45,7 +45,7 @@ jobs:
         uses: docker/setup-buildx-action@v3 
 
       - name: Login to Docker HUb
-        run: docker login --username sjsjsikem --password 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 ghcr.io
+        run: docker login --username sjsjsikem --password-stdin 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 ghcr.io
 
       - id: docker_meta
         uses: docker/metadata-action@v4.4.0
