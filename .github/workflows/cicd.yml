@@ -91,7 +91,7 @@ jobs:
 
       - uses: MeilCli/slack-upload-file@v3
         with:
-          slack_token: 'xoxe.xoxp-1-Mi0yLTYwOTMwMTAxNzYyOTAtNjExNjAwNDExMTk4NC02MTE2MDE5NTM5MjQ4LTYwOTMwNzIxNTE2MzUtMzA1ODBkYjNlMmZhYjYzMWFmNWQwN2M1ODg0M2I4OTRmMTUzMmExYjBjOTRhOGRlNWQyYjMwMDMzMjY2ODUzMg'
+          slack_token: ${{secrets.SLACK_TOKEN}}
           channel_id: 'test-submission'
           content: 'file content'
           file_type: 'text'
