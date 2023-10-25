@@ -19,6 +19,25 @@ jobs:
       - name: LS Output
         run: ls
 
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.1.1
+
+      - name: Build an image from Dockerfile
+        run: |
+            docker build -t docker.io/sjsjsikem/git-cicd:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         
@@ -28,24 +47,98 @@ jobs:
       - name: Login to Docker HUb
         uses: docker/login-action@v3
         with:
+            registry: ghcr.io
             username: 'tmy2517@gmail.com'
             password: 'Tmy78044#'
 
-      - name: Build an image from Dockerfile
+      - id: docker_meta
+        uses: docker/metadata-action@v4.4.0
+        with:
+          images: ghcr.io/sigstore/sample-honk
+          tags: type=sha,format=long
+
+      - name: Build and Push container images
+        uses: docker/build-push-action@v4.0.0
+        id: build-and-push
+        with:
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+
+      # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+      - name: Sign image with a key
         run: |
-            docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+        env:
+          TAGS: ${{ steps.docker_meta.outputs.tags }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+      - name: Sign the images with GitHub OIDC Token
+        env:
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          TAGS: ${{ steps.docker_meta.outputs.tags }}
+        run: cosign sign --yes "${TAGS}@${DIGEST}"
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with: 
+            context: .
+            push: true
+            tags: 'sjsjsikem/git-cicd1'
+            labels: 'sjsjsikem/git-cicd1'
+
+      - name: Send custom JSON data to Slack workflow
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
         with:
-          sarif_file: 'trivy-results.sarif'
+    # For posting a rich message using Block Kit
+           payload: |
+              {
+                   "channel": "C123ABC456",
+              "attachments": [
+                  {
+                      "fallback": "Plain-text summary of the attachment.",
+                      "color": "#2eb886",
+                      "pretext": "Optional text that appears above the attachment block",
+                      "author_name": "Bobby Tables",
+                      "author_link": "http://flickr.com/bobby/",
+                      "author_icon": "http://flickr.com/icons/bobby.jpg",
+                      "title": "Slack API Documentation",
+                      "title_link": "https://api.slack.com/",
+                      "text": "Optional text that appears within the attachment",
+                      "fields": [
+                          {
+                              "title": "Priority",
+                              "value": "High",
+                              "short": false
+                          }
+                      ],
+                      "image_url": "http://my-website.com/path/to/image.jpg",
+                      "thumb_url": "http://example.com/path/to/thumb.png",
+                      "footer": "Slack API",
+                      "footer_icon": "https://platform.slack-edge.com/img/default_application_icon.png",
+                      "ts": 123456789
+                  }
+              ]
+              }
+               env:
+                  SLACK_WEBHOOK_URL: 'https://hooks.slack.com/services/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'
+                  SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+
+      - uses: MeilCli/slack-upload-file@v3
+        with:
+          slack_token: 'xoxe.xoxp-1-Mi0yLTYwOTMwMTAxNzYyOTAtNjExNjAwNDExMTk4NC02MTE2MDE5NTM5MjQ4LTYwOTMwNzIxNTE2MzUtMzA1ODBkYjNlMmZhYjYzMWFmNWQwN2M1ODg0M2I4OTRmMTUzMmExYjBjOTRhOGRlNWQyYjMwMDMzMjY2ODUzMg'
+          channel_id: 'test-submission'
+          content: 'file content'
+          file_type: 'text'
+          file_name: 'text.txt'
+          title: 'title of file'
+          initial_comment: 'post by slack-upload-file'
+          # thread_ts: 'option'
+              
             
             
             
