@@ -13,9 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.1.1
         with:
-          reposity: 'github.git-cicd'
-          ref: 'master'
-          token: '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'
+          reposity: 'git-cicd'
           ssh-key: 'git@github.com:sjsjsikem/git-cicd.git'
           ssh-known-hosts: 'ssh-keyscan github.com'
           
