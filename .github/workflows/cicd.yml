@@ -12,6 +12,11 @@ jobs:
    steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
+        with:
+          reposity: 'git-cicd'
+          ref: 'master'
+          ssh-key: 'git@github.com:sjsjsikem/git-cicd.git'
+          
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
