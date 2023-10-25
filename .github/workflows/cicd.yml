@@ -37,13 +37,21 @@ jobs:
         with: 
             images: 'sjsjsikem/git-cicd'
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with: 
-            context: .
-            push: true
-            tags: 'sjsjsikem/git-cicd'
-            labels: 'sjsjsikem/git-cicd'
+      - name: Build an image from Dockerfile
+        run: |
+            docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
             
             
             
