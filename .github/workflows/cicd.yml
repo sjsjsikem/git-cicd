@@ -9,6 +9,10 @@ on:
 jobs:
  myci:
    runs-on: ubuntu-latest
+   env:
+     SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
+     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+   
    steps:
       - name: LS output before
         run: ls
@@ -65,11 +69,8 @@ jobs:
             labels: 'sjsjsikem/git-cicd1'
 
       - name: Send custom JSON data to Slack workflow
-        id: slack
-        uses: slackapi/slack-github-action@v1.24.0
-        env:
-            SLACK_WEBHOOK_URL: 'https://hooks.slack.com/services/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'
-            SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        uses: actions/slack@v1
+        
 
         with:
     # For posting a rich message using Block Kit
