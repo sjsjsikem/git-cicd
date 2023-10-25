@@ -2,18 +2,18 @@
   uses: actions/checkout@v4.1.1
   with:
     # Repository name with owner. For example, actions/checkout
-    repository: github.git-cicd
+    repository: 'github.git-cicd'
     # The branch, tag or SHA to checkout. When checking out the repository that triggered a workflow, this defaults to the reference or SHA for that event.  Otherwise, uses the default branch.
 
-    ref: master
+    ref: 'master'
     # Personal access token (PAT) used to fetch the repository. The PAT is configured with the local git config, which enables your scripts to run authenticated git commands. The post-job step removes the PAT.
 
-    token: # optional, default is ${{ github.token }}
+    token: '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'
     # SSH key used to fetch the repository. The SSH key is configured with the local git config, which enables your scripts to run authenticated git commands. The post-job step removes the SSH key.
 
-[Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
 
-    ssh-key: # optional
+
+    ssh-key: ''
     # Known hosts in addition to the user and global host key database. The public SSH keys for a host may be obtained using the utility `ssh-keyscan`. For example, `ssh-keyscan github.com`. The public key for github.com is always implicitly added.
 
     ssh-known-hosts: # optional
