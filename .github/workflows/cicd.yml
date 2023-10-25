@@ -96,7 +96,7 @@ jobs:
            payload: |
               {
                    "channel": "C123ABC456",
-              "attachments": [
+                   "attachments": [
                   {
                       "fallback": "Plain-text summary of the attachment.",
                       "color": "#2eb886",
