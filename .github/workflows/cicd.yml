@@ -31,12 +31,6 @@ jobs:
             username: 'tmy2517@gmail.com'
             password: 'Tmy78044#'
 
-      - name: Extract metadata(tags,labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5.0.0
-        with: 
-            images: 'sjsjsikem/git-cicd'
-
       - name: Build an image from Dockerfile
         run: |
             docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
