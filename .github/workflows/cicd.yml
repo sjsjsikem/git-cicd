@@ -48,6 +48,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Extract metadata(tags,labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5.0.0
+        with: 
+            images: 'sjsjsikem/git-cicd'
+
       - name: Build and push
         uses: docker/build-push-action@v5
         id: build-and-push
@@ -55,22 +61,32 @@ jobs:
             context: .
             platform: linux/amd64,linux/arm64
             push: true
-            tags: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
+            tags: 'sjsjsikem/git-cicd'
+            labels: 'sjsjsikem/git-cicd'
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
+          image-ref: 'sjsjsikem/git-cicd'
           format: 'table'
           exit-code: '0'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
+      - name: Sign image with a key
+        run: |
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+
       - name: Sign the images with GitHub OIDC Token
         env:
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
-          TAGS:  ${{ steps.build-and-push.outputs.tags }}
+          TAGS:  ${{ steps.meta.outputs.tags }}
         run: cosign sign --yes "${TAGS}@${DIGEST}"
 
       
