@@ -7,7 +7,7 @@ on:
       branches: [master]
 
 jobs:
- myci:
+ myinform:
    runs-on: ubuntu-latest
 
    permissions:
