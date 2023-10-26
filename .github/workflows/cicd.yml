@@ -75,7 +75,6 @@ jobs:
         id: build-and-push
         with: 
             context: .
-            platform: linux/amd64,linux/arm64
             push: true
             tags: 'sjsjsikem/git-cicd'
             labels: 'sjsjsikem/git-cicd'
@@ -105,10 +104,11 @@ jobs:
         with:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-          content: 'report.txt'
+          content: 'report'
           file_path: ${{steps.trivyoutput.outputs.output}}
+          file_type: 'table'
           file_name: 'report.txt'
-          title: 'Report'
+          title: 'report'
           initial_comment: 'post by slack-upload-file'
          
               
