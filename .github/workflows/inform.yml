@@ -28,18 +28,6 @@ jobs:
         run: ls
 
 
-      - name: Slack Notification
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_CHANNEL: general
-          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-          SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: 'Hey Guys'
-          SLACK_TITLE: Build and Sign
-          SLACK_USERNAME: rtCamp
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }} 
-
-
       - name: Send custom JSON data to Slack workflow
         id: slackid
         uses: slackapi/slack-github-action@v1.24.0
@@ -68,6 +56,17 @@ jobs:
           SLACK_TITLE: Build and Sign
           SLACK_USERNAME: rtCamp
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: ${{steps.slackid.outputs.payload}}
+          SLACK_TITLE: Build and Sign
+          SLACK_USERNAME: rtCamp
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }} 
 
     
 
