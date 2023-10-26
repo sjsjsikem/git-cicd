@@ -56,7 +56,7 @@ jobs:
           SLACK_CHANNEL: general
           SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: ${{steps.slack.output.payload}}
+          SLACK_MESSAGE: ${{steps.slack.outputs.payload}}
           SLACK_LINK_NAMES: true
           SLACK_TITLE: Build and Sign
           SLACK_USERNAME: rtCamp
