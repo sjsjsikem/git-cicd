@@ -93,9 +93,8 @@ jobs:
           SLACK_CHANNEL: general
           SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: 'e1221866@u.nus.edu'
-          SLACK_TITLE: Name,
-                       Email
+          SLACK_MESSAGE: 'Name:Tang Mingyang\nEmail:e1221866@u.nus.edu'
+          SLACK_TITLE: Build and Sign
           SLACK_USERNAME: rtCamp
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
 
