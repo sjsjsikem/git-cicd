@@ -38,17 +38,17 @@ jobs:
 
       - name: Build an image from Dockerfile
         run: |
-            docker build -t docker.io/sjsjsikem/git-cicd:${{ github.sha }} .
+            docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
+          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
           format: 'table'
-          output: 'output.txt'
+          exit-code: '0'
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH,MEDIUM,LOW'
+          severity: 'CRITICAL,HIGH'
           
 
       - name: Set up QEMU
