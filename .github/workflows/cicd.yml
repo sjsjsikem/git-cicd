@@ -41,13 +41,16 @@ jobs:
           docker build -t docker.io/sjsjsikem/git-cicd:${{ github.sha }} .
           
       - name: Run Trivy vulnerability scanner
+        id: trivyoutput
         uses: aquasecurity/trivy-action@master
         with:
+          output: 'report.txt'
           image-ref: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
           format: 'table'
-          ignore-unfixed: false
+          exit-code: '0'
+          ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL,HIGH,MEDIUM,LOW'
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -102,8 +105,9 @@ jobs:
         with:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-          content: 'file content'
-          file_name: 'output.txt'
+          content: 'report.txt'
+          file_path: ${{steps.trivyoutput.outputs.output}}
+          file_name: 'report.txt'
           title: 'Report'
           initial_comment: 'post by slack-upload-file'
          
