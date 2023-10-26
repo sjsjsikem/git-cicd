@@ -104,7 +104,6 @@ jobs:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           content: 'file content'
-          file_type: 'table'
           file_name: 'output.txt'
           title: 'Report'
           initial_comment: 'post by slack-upload-file'
