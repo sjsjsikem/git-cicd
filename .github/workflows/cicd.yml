@@ -55,7 +55,7 @@ jobs:
             context: .
             platform: linux/amd64,linux/arm64
             push: true
-            tags: docker.io/sjsjsikem/git-cicd:${{ github.sha }}
+            tags: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
