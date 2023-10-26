@@ -34,23 +34,7 @@ jobs:
           check-latest: true
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.1.2
-
-      - name: Build an image from Dockerfile
-        run: |
-            docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
-          format: 'table'
-          exit-code: '0'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
-          output: 'output.txt'
-          
+        uses: sigstore/cosign-installer@v3.1.2          
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -64,25 +48,41 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract metadata(tags,labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5.0.0
-        with: 
-            images: 'sjsjsikem/git-cicd1'
-
       - name: Build and push
         uses: docker/build-push-action@v5
         id: build-and-push
         with: 
             context: .
+            platform: linux/amd64,linux/arm64
             push: true
-            tags: 'sjsjsikem/git-cicd1'
-            labels: 'sjsjsikem/git-cicd1'
+            tags: docker.io/sjsjsikem/git-cicd:${{ github.sha }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          output: 'output.txt'
+
+      - name: Sign image with a key
+        run: |
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+        env:
+          TAGS: ${{ steps.build-and-push.outputs.tags }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+
+    
 
       - name: Sign the images with GitHub OIDC Token
         env:
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
-          TAGS:  ${{ steps.meta.outputs.tags }}
+          TAGS:  ${{ steps.build-and-push.outputs.tags }}
         run: cosign sign --yes "${TAGS}@${DIGEST}"
 
       
