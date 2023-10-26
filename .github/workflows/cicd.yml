@@ -7,7 +7,7 @@ on:
       branches: [master]
 
 jobs:
- myci:
+ runsontrivy:
    runs-on: ubuntu-latest
 
    permissions:
@@ -34,8 +34,22 @@ jobs:
           check-latest: true
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.1.2          
+        uses: sigstore/cosign-installer@v3.1.2
 
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t docker.io/sjsjsikem/git-cicd:${{ github.sha }} .
+          
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: false
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+      
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         
@@ -64,15 +78,6 @@ jobs:
             tags: 'sjsjsikem/git-cicd'
             labels: 'sjsjsikem/git-cicd'
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'sjsjsikem/git-cicd'
-          format: 'table'
-          exit-code: '0'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
 
       - name: Sign the images with GitHub OIDC Token
         env:
