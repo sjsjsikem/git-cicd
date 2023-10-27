@@ -72,7 +72,7 @@ jobs:
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           content: 'report'
           file_path: ${{steps.trivyoutput.outputs.output}}
-          file_name: ${{steps.trivyoutput.outputs.output}}
+          file_name: 'report.txt'
           title: 'report'
           initial_comment: 'post by slack-upload-file'
     
