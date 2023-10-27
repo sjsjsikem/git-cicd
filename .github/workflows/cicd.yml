@@ -59,7 +59,7 @@ jobs:
       packages: write
       id-token: write # needed for signing the images with GitHub OIDC Token
 
-    if: ${{steps.trivyoutput.outputs.exit-code}}=='1'
+    if: ${{runsontrivy.steps.trivyoutput.outputs.exit-code}}=='1'
     steps:
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
@@ -91,7 +91,7 @@ jobs:
       packages: write
       id-token: write # needed for signing the images with GitHub OIDC Token
 
-   if:  ${{steps.trivyoutput.outputs.exit-code}}=='0'
+   if:  ${{runsontrivy.steps.trivyoutput.outputs.exit-code}}=='0'
    steps:
 
       
