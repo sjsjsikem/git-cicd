@@ -59,7 +59,7 @@ jobs:
       packages: write
       id-token: write # needed for signing the images with GitHub OIDC Token
 
-    if: failure()
+    if: ${{steps.trivyoutput.outputs.exit-code}}=='1'
     steps:
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
@@ -67,10 +67,10 @@ jobs:
           SLACK_CHANNEL: general
           SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: ${{secrets.INFORM}}
-          SLACK_TITLE: Build and Sign
+          SLACK_MESSAGE: "Failed to scan by trivy"
+          SLACK_TITLE: Failed
           SLACK_USERNAME: rtCamp
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_MY }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Upload file
         uses: MeilCli/slack-upload-file@v3
@@ -91,7 +91,7 @@ jobs:
       packages: write
       id-token: write # needed for signing the images with GitHub OIDC Token
 
-   if: success()
+   if:  ${{steps.trivyoutput.outputs.exit-code}}=='0'
    steps:
 
       
@@ -140,7 +140,7 @@ jobs:
           SLACK_MESSAGE: ${{secrets.INFORM}}
           SLACK_TITLE: Build and Sign
           SLACK_USERNAME: rtCamp
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_MY }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Upload file
         uses: MeilCli/slack-upload-file@v3
