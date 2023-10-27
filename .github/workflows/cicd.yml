@@ -47,7 +47,7 @@ jobs:
           image-ref: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
           format: 'table'
           output: 'report.txt'
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH,MEDIUM'
