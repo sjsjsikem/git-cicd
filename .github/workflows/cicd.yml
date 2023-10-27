@@ -71,10 +71,10 @@ jobs:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           content: 'report'
+          file_path_follow_symbolic_links: false
           file_path: ${{steps.trivyoutput.outputs.output}}
           file_name: 'report.txt'
           title: 'report'
-          initial_comment: 'post by slack-upload-file'
     
 
         if: success()
