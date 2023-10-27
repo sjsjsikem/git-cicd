@@ -63,7 +63,7 @@ jobs:
           SLACK_MESSAGE: "Failed to scan by trivy"
           SLACK_TITLE: Failed
           SLACK_USERNAME: rtCamp
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_MY }}
 
       - name: Upload file
         uses: MeilCli/slack-upload-file@v3
@@ -125,17 +125,7 @@ jobs:
           SLACK_MESSAGE: ${{secrets.INFORM}}
           SLACK_TITLE: Build and Sign
           SLACK_USERNAME: rtCamp
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      - name: Upload file
-        uses: MeilCli/slack-upload-file@v3
-        with:
-          slack_token: ${{ secrets.SLACK_TOKEN }}
-          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-          content: 'report'
-          file_name: 'report.txt'
-          title: 'report'
-          initial_comment: 'post by slack-upload-file'
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_MY }}
          
               
             
