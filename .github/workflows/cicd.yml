@@ -51,16 +51,9 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH,MEDIUM,LOW'
- failurerun:
-    runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      packages: write
-      id-token: write # needed for signing the images with GitHub OIDC Token
+        if: failure()
 
-    if: success()
-    steps:
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
@@ -81,18 +74,10 @@ jobs:
           file_name: 'report.txt'
           title: 'report'
           initial_comment: 'post by slack-upload-file'
-       
-          
- successrun:
-   runs-on: ubuntu-latest
+    
 
-   permissions:
-      contents: read
-      packages: write
-      id-token: write # needed for signing the images with GitHub OIDC Token
+        if: success()
 
-   if: failure()
-   steps:
 
       
       - name: Set up QEMU
