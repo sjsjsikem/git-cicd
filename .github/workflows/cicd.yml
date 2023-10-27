@@ -76,7 +76,7 @@ jobs:
           title: 'report'
     
 
-        if: success()
+        if: failure()
 
 
       
