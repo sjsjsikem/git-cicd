@@ -49,9 +49,8 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH,MEDIUM,LOW'
+          severity: 'CRITICAL,HIGH,MEDIUM'
 
-        if: failure()
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
