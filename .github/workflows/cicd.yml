@@ -97,16 +97,16 @@ jobs:
           SLACK_MESSAGE: ${{secrets.INFORM}}
           SLACK_TITLE: Build and Sign
           SLACK_USERNAME: rtCamp
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_MY }}
 
       - name: Upload file
         uses: MeilCli/slack-upload-file@v3
         with:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-          content: 'file content'
-          file_name: 'text.txt'
-          title: 'title of file'
+          content: 'report'
+          file_name: 'report.txt'
+          title: 'report'
           initial_comment: 'post by slack-upload-file'
          
               
