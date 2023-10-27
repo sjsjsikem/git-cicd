@@ -45,7 +45,8 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
-          format: 'table'
+          format: 'text'
+          output: 'report.txt'
           exit-code: '0'
           ignore-unfixed: true
           vuln-type: 'os,library'
