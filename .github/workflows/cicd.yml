@@ -44,7 +44,6 @@ jobs:
         id: trivyoutput
         uses: aquasecurity/trivy-action@master
         with:
-          output: 'report.txt'
           image-ref: 'docker.io/sjsjsikem/git-cicd:${{ github.sha }}'
           format: 'table'
           exit-code: '1'
